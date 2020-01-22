@@ -5,6 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import SideNavigation from './components/SideNavigation'
 import Header from './components/Header/Header'
 import MainFeedBlog from './components/MainFeedBlog/MainFeedBlog'
+import { createBrowserHistory } from 'history';
 //Modules
 import { Container, Row, Col, Alert } from 'reactstrap'
 import styles from './styles/global.module.sass'

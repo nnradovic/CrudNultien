@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Card, CardImg, CardText, CardBody, CardLink,
     CardTitle, CardSubtitle, Container, Row, Col, Button
@@ -6,15 +6,49 @@ import {
 import Holder from 'holderjs';
 import styles from './blog.module.sass'
 import moment from 'moment';
+import Modal from '../Modal/Modal'
+import { deleteApi, updateApi, fetchSingleApi } from '../../api/fetch_api'
+import { Link, withRouter } from 'react-router-dom';
+import CommentList from '../CommentList/CommentList'
+import ModalBlog from '../Modal/Modal'
 
-const Example = (props) => {
-    console.log(props);
+const Blog = (props) => {
 
-    const { blog: { title, createdAt, text } } = props
+    const { blog: { title, createdAt, text, id } } = props
+    const [blog, setBlog] = useState(0);
+
+    function blogDelete(id) {
+        return (
+            deleteApi('BlogPosts', 'delete', id)
+        )
+    }
+
+
+    const [modal, setModal] = useState(false);
+    const [unmountOnClose, setUnmountOnClose] = useState(true);
+    ;
+    const toggle = () => {
+        setModal(!modal)
+        fetchSingleApi('BlogPosts', 'get', id).then(res => {
+            setBlog(res.data.resultData)
+        })
+    };
+
+    const changeUnmountOnClose = e => {
+        let value = e.target.value;
+        setUnmountOnClose(JSON.parse(value));
+    }
+
+
+
+
     return (
+
         <Card className={styles.blog}>
             <CardBody>
             </CardBody>
+
+
             <Row>
                 <Col md={2} className={styles.blogimage}>
                     <img src="https://via.placeholder.com/80" />
@@ -26,8 +60,8 @@ const Example = (props) => {
 
                 </Col>
                 <Col md={3}>
-                    <Button href="#">Edit</Button>
-                    <Button href="#">Delete</Button>
+                    <Button href="#" onClick={() => toggle()}>Edit</Button>
+                    <Button href="#" onClick={() => blogDelete(props.blog.id)} >Delete</Button>
                 </Col>
             </Row>
             <CardBody className={styles.cardtext}>
@@ -41,9 +75,9 @@ const Example = (props) => {
 
                 </Col>
             </Row>
-
+            <ModalBlog isEdit={true} blog={blog} modal={modal} toggle={toggle} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
         </Card>
     );
 };
 
-export default Example;
+export default withRouter(Blog);

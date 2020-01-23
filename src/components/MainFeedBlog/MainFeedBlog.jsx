@@ -6,10 +6,16 @@ import { fetchApi } from '../../api/fetch_api'
 import Blog from '../Blog/Blog'
 import styles from './mainfeedblog.module.sass'
 import ModalBlog from '../Modal/Modal'
+import { useSelector, useDispatch, connect } from "react-redux"
 
 function MainFeedBlog(props) {
     const {
+        blog
     } = props;
+
+
+    const blogsList = useSelector((state) => state.blog)
+    const dispatch = useDispatch()
 
     const [modal, setModal] = useState(false);
     const [unmountOnClose, setUnmountOnClose] = useState(true);
@@ -24,38 +30,41 @@ function MainFeedBlog(props) {
     useEffect(() => {
         fetchApi('BlogPosts', 'get').then(res => {
             setBlogs(res.data.resultData)
+            dispatch({ type: "LOADBLOG", payload: res.data.resultData })
         })
     }, []);
 
-    function renderBlogs() {
+    function renderBlogs(blogsList) {
         return (
-            !!blogs ? (blogs.map((blog, key) => {
+            !!props.blog ? (props.blog.map((blog, key) => {
                 return <Blog key={key} blog={blog} />
             })) : <p>...Loading</p>
         )
-
-
     }
-    function modalToggle() {
-        return (
-            console.log(111)
-
-        )
-
-
-    }
-
     return (
         <React.Fragment>
+            {console.log(props)}
             <Row>
                 <Col>
                     <Button onClick={() => toggle()} className={`${styles.addbutton} float-right`}>Add Post</Button>
                 </Col>
             </Row>
-            {renderBlogs()}
+
+            {renderBlogs(blogsList)}
             <ModalBlog isEdit={false} modal={modal} toggle={toggle} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
         </React.Fragment>
     );
 }
 
-export default MainFeedBlog;
+
+const mapStateToProps = state => {
+
+    return {
+        blog: state.blog
+    }
+}
+
+
+
+
+export default connect(mapStateToProps)(MainFeedBlog);

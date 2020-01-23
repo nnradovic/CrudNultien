@@ -7,19 +7,31 @@ import Holder from 'holderjs';
 import styles from './blog.module.sass'
 import moment from 'moment';
 import Modal from '../Modal/Modal'
-import { deleteApi, updateApi, fetchSingleApi } from '../../api/fetch_api'
+import { deleteApi, updateApi, fetchSingleApi, fetchApi } from '../../api/fetch_api'
 import { Link, withRouter } from 'react-router-dom';
 import CommentList from '../CommentList/CommentList'
 import ModalBlog from '../Modal/Modal'
+import { useSelector, useDispatch, connect } from "react-redux"
+
 
 const Blog = (props) => {
 
     const { blog: { title, createdAt, text, id } } = props
     const [blog, setBlog] = useState(0);
+    const blogLists = useSelector((state) => state.blog)
+    const dispatch = useDispatch()
+
 
     function blogDelete(id) {
+        let del = blogLists.filter(bl => {
+            return (
+                bl.id !== props.blog.id
+            )
+        })
+
         return (
-            deleteApi('BlogPosts', 'delete', id)
+            deleteApi('BlogPosts', 'delete', id),
+            dispatch({ type: "DELETEBLOG", payload: del })
         )
     }
 
@@ -38,17 +50,11 @@ const Blog = (props) => {
         let value = e.target.value;
         setUnmountOnClose(JSON.parse(value));
     }
-
-
-
-
     return (
 
         <Card className={styles.blog}>
             <CardBody>
             </CardBody>
-
-
             <Row>
                 <Col md={2} className={styles.blogimage}>
                     <img src="https://via.placeholder.com/80" />
@@ -61,7 +67,7 @@ const Blog = (props) => {
                 </Col>
                 <Col md={3}>
                     <Button href="#" onClick={() => toggle()}>Edit</Button>
-                    <Button href="#" onClick={() => blogDelete(props.blog.id)} >Delete</Button>
+                    <Button href="#" onClick={() => blogDelete(id)} >Delete</Button>
                 </Col>
             </Row>
             <CardBody className={styles.cardtext}>
@@ -75,9 +81,9 @@ const Blog = (props) => {
 
                 </Col>
             </Row>
-            <ModalBlog isEdit={true} blog={blog} modal={modal} toggle={toggle} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
+            <ModalBlog id={id} isEdit={true} blog={blog} modal={modal} toggle={toggle} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
         </Card>
     );
 };
 
-export default withRouter(Blog);
+export default connect()(withRouter(Blog));

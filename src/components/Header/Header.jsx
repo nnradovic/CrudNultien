@@ -1,21 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { searchApi, fetchApi } from '../../api/fetch_api'
+import { useSelector, useDispatch, connect } from "react-redux"
 import {
     Collapse,
     Navbar,
     NavbarToggler,
     NavbarBrand,
     Nav,
-    NavItem,
     NavLink,
-    NavbarText,
     Input
 
 } from 'reactstrap';
-import style from './header.module.sass'
-const Header = (props) => {
-    const [isOpen, setIsOpen] = useState(false);
 
+const Header = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [searchTerm, setsearchTerm] = useState('');
     const toggle = () => setIsOpen(!isOpen);
+    const blogsList = useSelector((state) => state.blog)
+    const dispatch = useDispatch()
+
+
+    //Search input
+    function handleChange(searchInput) {
+        setsearchTerm(searchInput)
+    }
+
+    useEffect(() => {
+        if (searchTerm === '') {
+            fetchApi('BlogPosts', 'get').then(res => {
+                dispatch({ type: "LOAD_BLOG", payload: res.data.resultData })
+            })
+        } else {
+            searchApi('BlogPosts', 'get', searchTerm).then(res => {
+                dispatch({ type: "LOAD_BLOG", payload: res.data.resultData })
+            })
+        }
+
+    }, [searchTerm]);
 
     return (
         <div>
@@ -24,7 +45,7 @@ const Header = (props) => {
                 <NavbarToggler onClick={toggle} />
                 <Collapse isOpen={isOpen} navbar>
                     <Nav className="ml-auto" navbar>
-                        <Input placeholder="Search" />
+                        <Input placeholder="Search" onChange={(e) => handleChange(e.target.value)} />
                         <NavLink href="/">Link 1</NavLink>
                         <NavLink href="/">Link 2</NavLink>
                         <NavLink href="/">Link 3</NavLink>

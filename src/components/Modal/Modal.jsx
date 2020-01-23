@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Input, Label, FormGroup } from 'reactstrap';
+import React from 'react';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useForm } from "react-hook-form";
 import { fetchApi, updateApi } from '../../api/fetch_api'
 import { useSelector, useDispatch, connect } from "react-redux"
 const ModalBlog = (props) => {
     const {
-        buttonLabel,
         className,
         modal,
         toggle,
@@ -18,16 +17,17 @@ const ModalBlog = (props) => {
 
     const dispatch = useDispatch()
     const { handleSubmit, register } = useForm();
+
+    //Post new blog or edit blog
     const onSubmit = values => {
         if (isEdit) {
             updateApi('BlogPosts', 'put', values, id)
-            dispatch({ type: "UPDATEBLOG", payload: Object.assign({}, values, { id: id }) })
+            dispatch({ type: "UPDATE_BLOG", payload: Object.assign({}, values, { id: id }) })
             toggle()
         } else {
-
             let idExsistArray = []
             blogLists.map(blogSingle => {
-                idExsistArray.push(blogSingle.id)
+                return idExsistArray.push(blogSingle.id)
             })
             let idNew = () => {
                 if (idExsistArray.length !== 0) {
@@ -36,18 +36,12 @@ const ModalBlog = (props) => {
                     return 1
                 }
             }
-            console.log(idNew);
-
             let val = Object.assign(values, { categoryId: 0, id: idNew() })
-            dispatch({ type: "ADDBLOG", payload: val })
+            dispatch({ type: "ADD_BLOG", payload: val })
             fetchApi('BlogPosts', 'post', val)
             toggle()
 
-
         }
-
-
-
     };
 
     return (
@@ -62,7 +56,6 @@ const ModalBlog = (props) => {
                             })} />
                     </ModalBody>
                     <ModalBody>
-
                         <input type="textarea" placeholder="Text of the post" rows={30} name="text" defaultValue={!!blog ? blog.text : null}
                             ref={register({
                                 required: 'Required'
@@ -74,8 +67,6 @@ const ModalBlog = (props) => {
                     </ModalFooter>
                 </form>
             </Modal>
-
-
         </div>
     );
 }

@@ -1,18 +1,12 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import {
-    Collapse,
     Navbar,
-    NavbarToggler,
-    NavbarBrand,
     Nav,
-    NavItem,
     NavLink,
-    NavbarText,
-    Input
+
 
 } from 'reactstrap';
-import { Redirect, Route } from 'react-router';
 
 function SideNavigation() {
     return (

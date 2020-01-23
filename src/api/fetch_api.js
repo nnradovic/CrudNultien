@@ -1,8 +1,6 @@
 import env from '../env';
 import axios from 'axios';
 
-
-
 const fetchApi = (resource, method, values, id) => {
     const options = {
         method: method,
@@ -10,7 +8,6 @@ const fetchApi = (resource, method, values, id) => {
         data: values
     };
     return axios(options)
-
 }
 const fetchSingleApi = (resource, method, id) => {
     const options = {
@@ -18,7 +15,6 @@ const fetchSingleApi = (resource, method, id) => {
         url: `${env.backend_url}/${resource}/${id}`,
     };
     return axios(options)
-
 }
 const deleteApi = (resource, method, id) => {
     const options = {
@@ -40,5 +36,13 @@ const updateApi = (resource, method, values, id) => {
     return axios(options)
 
 }
+const searchApi = (resource, method, values) => {
+    const options = {
+        method: method,
+        url: `${env.backend_url}/${resource}/Search?term=${values}`,
 
-export { fetchApi, deleteApi, fetchSingleApi, updateApi } 
+    };
+    return axios(options)
+
+}
+export { fetchApi, deleteApi, fetchSingleApi, updateApi, searchApi } 

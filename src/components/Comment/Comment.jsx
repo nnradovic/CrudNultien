@@ -3,42 +3,42 @@ import {
     Card, CardText, CardBody,
     CardTitle, CardSubtitle, Row, Col, Button
 } from 'reactstrap';
-import styles from './blog.module.sass'
+import styles from './comment.module.sass'
 import moment from 'moment';
 import { deleteApi, fetchSingleApi } from '../../api/fetch_api'
-import ModalBlog from '../Modal/ModalBlog'
+import { withRouter } from 'react-router-dom';
+import ModalComment from '../Modal/ModalComment'
 import { useSelector, useDispatch, connect } from "react-redux"
 
 
-const Blog = (props) => {
+const Comment = (props) => {
 
     const { data: { title, createdAt, text, id } } = props
-    const dispatch = useDispatch()
-    const blogLists = useSelector((state) => state.blog)
     const [blog, setBlog] = useState(0);
+    const dispatch = useDispatch()
+    const commentLists = useSelector((state) => state.comment)
     const [modal, setModal] = useState(false);
     const [unmountOnClose, setUnmountOnClose] = useState(true)
 
 
-    //Delete blog
+    //Delete comment
     function blogDelete(e, id) {
         e.stopPropagation()
-        let del = blogLists.filter(bl => {
+        let del = commentLists.filter(bl => {
             return (
                 bl.id !== props.data.id
             )
         })
         return (
-            deleteApi("BlogPosts", 'delete', id),
-            dispatch({ type: "DELETE_BLOG", payload: del })
+            deleteApi("Comment", 'delete', id),
+            dispatch({ type: "DELETE_COMMENT", payload: del })
         )
-
     }
-    //Get single blog
+    //Get single commeent
     const toggle = (e) => {
         e.preventDefault()
         setModal(!modal)
-        fetchSingleApi("BlogPosts", 'get', id).then(res => {
+        fetchSingleApi("Comment", 'get', id).then(res => {
             setBlog(res.data.resultData)
         })
     };
@@ -77,9 +77,9 @@ const Blog = (props) => {
                     <img src="https://via.placeholder.com/100" aria-hidden alt="Picture of me taking a photo of an image" />
                 </Col>
             </Row>
-            <ModalBlog id={id} isEdit={true} blog={blog} modal={modal} toggle={(e) => toggle(e)} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
+            <ModalComment id={id} isEdit={true} blog={blog} modal={modal} toggle={(e) => toggle(e)} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
         </Card>
     );
 };
 
-export default connect()(Blog);
+export default connect()(withRouter(Comment));

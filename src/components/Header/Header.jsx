@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { searchApi, fetchApi } from '../../api/fetch_api'
-import { useSelector, useDispatch, connect } from "react-redux"
+import { useDispatch } from "react-redux"
 import {
     Collapse,
     Navbar,
@@ -16,7 +16,6 @@ const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setsearchTerm] = useState('');
     const toggle = () => setIsOpen(!isOpen);
-    const blogsList = useSelector((state) => state.blog)
     const dispatch = useDispatch()
 
 

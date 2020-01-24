@@ -2,22 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { Button, Row, Col } from 'reactstrap';
 import { fetchApi } from '../../api/fetch_api'
 import Blog from '../Blog/Blog'
-import styles from './mainfeedblog.module.sass'
-import ModalBlog from '../Modal/Modal'
-import { useSelector, useDispatch, connect } from "react-redux"
+import styles from './bloglist.module.sass'
+import ModalBlog from '../Modal/ModalBlog'
+import { useDispatch, connect } from "react-redux"
+import { Link } from 'react-router-dom';
 
-function MainFeedBlog(props) {
+function BlogList(props) {
 
-    const blogsList = useSelector((state) => state.blog)
     const dispatch = useDispatch()
     const [modal, setModal] = useState(false);
     const [unmountOnClose, setUnmountOnClose] = useState(true);
-
     const toggle = () => setModal(!modal);
     const changeUnmountOnClose = e => {
         let value = e.target.value;
         setUnmountOnClose(JSON.parse(value));
     }
+
+
     //Load blogs
     useEffect(() => {
         fetchApi('BlogPosts', 'get').then(res => {
@@ -28,19 +29,18 @@ function MainFeedBlog(props) {
     function renderBlogs() {
         return (
             !!props.blog ? (props.blog.map((blog, key) => {
-                return <Blog key={key} blog={blog} />
+                return <Link to={{ pathname: `/comments/${blog.id}` }}> <Blog key={key} data={blog} /></Link >
             })) : <p>...Loading</p>
         )
     }
     return (
         <React.Fragment>
-            {console.log(props)}
             <Row>
                 <Col>
                     <Button onClick={() => toggle()} className={`${styles.addbutton} float-right`}>Add Post</Button>
                 </Col>
             </Row>
-            {renderBlogs(blogsList)}
+            {renderBlogs()}
             <ModalBlog isEdit={false} modal={modal} toggle={toggle} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
         </React.Fragment>
     );
@@ -56,4 +56,4 @@ const mapStateToProps = state => {
 
 
 
-export default connect(mapStateToProps)(MainFeedBlog);
+export default connect(mapStateToProps)(BlogList);

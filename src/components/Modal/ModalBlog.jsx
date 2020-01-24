@@ -11,19 +11,23 @@ const ModalBlog = (props) => {
         unmountOnClose,
         blog,
         isEdit,
-        id
+        id,
+        comment,
+
     } = props;
     let blogLists = useSelector((state) => state.blog)
-
     const dispatch = useDispatch()
     const { handleSubmit, register } = useForm();
 
-    //Post new blog or edit blog
-    const onSubmit = values => {
+
+
+    const onSubmit = (values, e, props) => {
+        console.log(props)
         if (isEdit) {
-            updateApi('BlogPosts', 'put', values, id)
+            updateApi("BlogPosts", 'put', values, id)
             dispatch({ type: "UPDATE_BLOG", payload: Object.assign({}, values, { id: id }) })
-            toggle()
+            toggle(e)
+            e.preventDefault()
         } else {
             let idExsistArray = []
             blogLists.map(blogSingle => {
@@ -36,27 +40,28 @@ const ModalBlog = (props) => {
                     return 1
                 }
             }
-            let val = Object.assign(values, { categoryId: 0, id: idNew() })
+            let val = Object.assign(values, { id: idNew() })
             dispatch({ type: "ADD_BLOG", payload: val })
-            fetchApi('BlogPosts', 'post', val)
+            fetchApi("BlogPosts", 'post', val)
             toggle()
 
-        }
-    };
 
+        }
+
+    }
     return (
         <div>
             <Modal isOpen={modal} toggle={toggle} className={className} unmountOnClose={unmountOnClose}>
                 <form onSubmit={handleSubmit(onSubmit)} >
                     <ModalHeader toggle={toggle}>{isEdit ? 'Edit' : 'Add'} blog post</ModalHeader>
                     <ModalBody>
-                        <input placeholder="Title of the post" name="title" defaultValue={!!blog ? blog.title : null}
+                        <input placeholder="Title of the post" name="title" defaultValue={comment ? !!comment ? comment.title : null : !!blog ? blog.title : null}
                             ref={register({
                                 required: 'Required'
                             })} />
                     </ModalBody>
                     <ModalBody>
-                        <input type="textarea" placeholder="Text of the post" rows={30} name="text" defaultValue={!!blog ? blog.text : null}
+                        <input type="textarea" placeholder="Text of the post" rows={30} name="text" defaultValue={comment ? !!comment ? comment.text : null : !!blog ? blog.text : null}
                             ref={register({
                                 required: 'Required'
                             })} />

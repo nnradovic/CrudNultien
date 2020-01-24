@@ -1,23 +1,54 @@
-import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import {
-    Collapse,
-    Navbar,
-    NavbarToggler,
-    NavbarBrand,
-    Nav,
-    NavItem,
-    NavLink,
-    NavbarText,
-    Input
+import React, { useEffect, useState } from 'react';
+import { Button, Row, Col } from 'reactstrap';
+import { fetchApi } from '../../api/fetch_api'
+import Comment from '../Comment/Comment'
+import styles from './commentlist.module.sass'
+import ModalComment from '../Modal/ModalComment'
+import { useDispatch, connect } from "react-redux"
 
-} from 'reactstrap';
-import { Redirect, Route } from 'react-router';
+function CommentList(props) {
 
-function CommentList() {
+    const dispatch = useDispatch()
+    const [modal, setModal] = useState(false);
+    const [unmountOnClose, setUnmountOnClose] = useState(true);
+    const toggle = () => setModal(!modal);
+    const changeUnmountOnClose = e => {
+        let value = e.target.value;
+        setUnmountOnClose(JSON.parse(value));
+    }
+    //Load blogs
+    useEffect(() => {
+        fetchApi('Comment', 'get').then(res => {
+            dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData })
+        })
+    }, []);
+
+    function renderBlogsComments() {
+        return (
+            !!props.comment ? (props.comment.map((com, key) => {
+                return <Comment data={com} key={key} comment={true} />
+            })) : <p>...Loading Comments</p>
+        )
+    }
     return (
-        <p>Test</p>
+        <React.Fragment>
+            <Row>
+                <Col>
+                    <Button onClick={() => toggle()} className={`${styles.addbutton} float-right`}>Add Post</Button>
+                </Col>
+            </Row>
+            {renderBlogsComments()}
+            <ModalComment isEdit={false} modal={modal} toggle={toggle} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
+        </React.Fragment>
     );
 }
 
-export default withRouter(CommentList);
+
+const mapStateToProps = state => {
+    return {
+        comment: state.comment
+    }
+}
+
+
+export default connect(mapStateToProps)(CommentList);

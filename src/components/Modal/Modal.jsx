@@ -3,34 +3,32 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useForm } from "react-hook-form";
 import { fetchApi, updateApi } from '../../api/fetch_api'
 import { useSelector, useDispatch, connect } from "react-redux"
-const ModalBlog = (props) => {
+import styles from './modal.module.sass'
+const ModalComment = (props) => {
     const {
         className,
         modal,
         toggle,
         unmountOnClose,
-        blog,
         isEdit,
         id,
-        comment,
-
+        comment
     } = props;
-    let blogLists = useSelector((state) => state.blog)
+
+    let commentsLists = useSelector((state) => state.comments)
+    let createdAt = new Date().getTime()
     const dispatch = useDispatch()
     const { handleSubmit, register } = useForm();
 
-
-
-    const onSubmit = (values, e, props) => {
-        console.log(props)
+    const onSubmit = (values, e) => {
         if (isEdit) {
-            updateApi("BlogPosts", 'put', values, id)
-            dispatch({ type: "UPDATE_BLOG", payload: Object.assign({}, values, { id: id }) })
+            updateApi("Comment", 'put', values, id)
+            dispatch({ type: "UPDATE_COMMENT", payload: Object.assign({}, values, { id: id, updatedAt: createdAt }) })
             toggle(e)
             e.preventDefault()
         } else {
             let idExsistArray = []
-            blogLists.map(blogSingle => {
+            commentsLists.map(blogSingle => {
                 return idExsistArray.push(blogSingle.id)
             })
             let idNew = () => {
@@ -40,9 +38,9 @@ const ModalBlog = (props) => {
                     return 1
                 }
             }
-            let val = Object.assign(values, { id: idNew() })
-            dispatch({ type: "ADD_BLOG", payload: val })
-            fetchApi("BlogPosts", 'post', val)
+            let val = Object.assign(values, { id: idNew(), createdAt: createdAt })
+            dispatch({ type: "ADD_COMMENT", payload: val })
+            fetchApi("Comment", 'post', val)
             toggle()
 
 
@@ -50,30 +48,36 @@ const ModalBlog = (props) => {
 
     }
     return (
-        <div>
-            <Modal isOpen={modal} toggle={toggle} className={className} unmountOnClose={unmountOnClose}>
+        <React.Fragment>
+
+            <Modal size="lg"
+                centered isOpen={modal} toggle={toggle} className={className} unmountOnClose={unmountOnClose}>
                 <form onSubmit={handleSubmit(onSubmit)} >
-                    <ModalHeader toggle={toggle}>{isEdit ? 'Edit' : 'Add'} blog post</ModalHeader>
+                    <ModalHeader toggle={toggle}>{isEdit ? 'Edit' : 'Add'} comment</ModalHeader>
                     <ModalBody>
-                        <input placeholder="Title of the post" name="title" defaultValue={comment ? !!comment ? comment.title : null : !!blog ? blog.title : null}
+                        <input className="form-control" placeholder="Title of the comment" name="title" defaultValue={!!comment ? comment.title : null}
                             ref={register({
                                 required: 'Required'
                             })} />
                     </ModalBody>
                     <ModalBody>
-                        <input type="textarea" placeholder="Text of the post" rows={30} name="text" defaultValue={comment ? !!comment ? comment.text : null : !!blog ? blog.text : null}
+                        <textarea className="form-control" placeholder="Text of the comment" rows={5} name="text" defaultValue={!!comment ? comment.text : null}
                             ref={register({
                                 required: 'Required'
                             })} />
                     </ModalBody>
-                    <ModalFooter>
+                    <ModalFooter className={styles.footer}>
                         <Button color="primary" type="submit" >Post</Button>{' '}
                         <Button color="secondary" onClick={toggle}>Cancel</Button>
                     </ModalFooter>
                 </form>
             </Modal>
-        </div>
+
+
+
+
+        </React.Fragment >
     );
 }
 
-export default connect()(ModalBlog);
+export default connect()(ModalComment);

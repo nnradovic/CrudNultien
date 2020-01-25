@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Row, Col, Alert } from 'reactstrap';
 import { fetchApi } from '../../api/fetch_api'
 import Comment from '../Comment/Comment'
 import styles from './commentlist.module.sass'
-import ModalComment from '../Modal/ModalComment'
+import ModalBlog from '../Modal/Modal'
 import { useDispatch, connect } from "react-redux"
 
-function CommentList(props) {
-
+function BlogList(props) {
     const dispatch = useDispatch()
     const [modal, setModal] = useState(false);
     const [unmountOnClose, setUnmountOnClose] = useState(true);
@@ -23,32 +22,44 @@ function CommentList(props) {
         })
     }, []);
 
-    function renderBlogsComments() {
+    function renderBlogs() {
         return (
-            !!props.comment ? (props.comment.map((com, key) => {
-                return <Comment data={com} key={key} comment={true} />
-            })) : <p>...Loading Comments</p>
+            !!props.comments ? (props.comments.map((comment, key) => {
+                return <Comment key={key} comment={comment} />
+            })) : <p>...Loading</p>
         )
     }
     return (
         <React.Fragment>
             <Row>
-                <Col>
-                    <Button onClick={() => toggle()} className={`${styles.addbutton} float-right`}>Add Post</Button>
+                <Col md={{ offset: 2, size: 8 }}>
+                    <Alert className={styles.alert}>
+                        Container for showin application message
+                   </Alert>
                 </Col>
             </Row>
-            {renderBlogsComments()}
-            <ModalComment isEdit={false} modal={modal} toggle={toggle} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
+            <div className={styles.container}>
+                <Row>
+                    <Col>
+                        <Button onClick={() => toggle()} className={`${styles.addbutton} float-right`}>Add Comment</Button>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        {renderBlogs()}
+                    </Col>
+                </Row>
+            </div>
+            <ModalBlog isEdit={false} modal={modal} toggle={toggle} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
         </React.Fragment>
     );
 }
 
-
 const mapStateToProps = state => {
     return {
-        comment: state.comment
+        comments: state.comments
     }
 }
 
 
-export default connect(mapStateToProps)(CommentList);
+export default connect(mapStateToProps)(BlogList);

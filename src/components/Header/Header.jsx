@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { searchApi, fetchApi } from '../../api/fetch_api'
 import { useDispatch } from "react-redux"
+import { Row, Col, Alert } from 'reactstrap'
+import styles from './header.module.sass'
 import {
     Collapse,
     Navbar,
@@ -18,44 +20,43 @@ const Header = () => {
     const toggle = () => setIsOpen(!isOpen);
     const dispatch = useDispatch()
 
-
     //Search input
     function handleChange(searchInput) {
         setsearchTerm(searchInput)
     }
-
     useEffect(() => {
         if (searchTerm === '') {
-            fetchApi('BlogPosts', 'get').then(res => {
-                dispatch({ type: "LOAD_BLOG", payload: res.data.resultData })
+            fetchApi('Comment', 'get').then(res => {
+                dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData })
             })
         } else {
-            searchApi('BlogPosts', 'get', searchTerm).then(res => {
-                dispatch({ type: "LOAD_BLOG", payload: res.data.resultData })
+            searchApi('Comment', 'get', searchTerm).then(res => {
+                dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData })
             })
         }
 
     }, [searchTerm]);
 
     return (
-        <div>
-            <Navbar color="light" light expand="lg" >
-                <NavbarBrand href="/">MyBlog</NavbarBrand>
+        <React.Fragment>
+            <Navbar light expand="lg" className={styles.navigation} >
+                <NavbarBrand href="/">Fronet end app</NavbarBrand>
+                <Input style={{ width: 200 }} placeholder="Search" onChange={(e) => handleChange(e.target.value)} />
                 <NavbarToggler onClick={toggle} />
                 <Collapse isOpen={isOpen} navbar>
                     <Nav className="ml-auto" navbar>
-                        <Input placeholder="Search" onChange={(e) => handleChange(e.target.value)} />
                         <NavLink href="/">Link 1</NavLink>
                         <NavLink href="/">Link 2</NavLink>
                         <NavLink href="/">Link 3</NavLink>
-                        <NavLink href="/">MyProfile</NavLink>
-                        <NavLink href="/">Logout</NavLink>
+
                     </Nav>
 
                 </Collapse>
             </Navbar>
-        </div>
+        </React.Fragment>
     );
 }
+
+
 
 export default Header

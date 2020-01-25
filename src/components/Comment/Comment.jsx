@@ -6,40 +6,41 @@ import {
 import styles from './comment.module.sass'
 import moment from 'moment';
 import { deleteApi, fetchSingleApi } from '../../api/fetch_api'
-import { withRouter } from 'react-router-dom';
-import ModalComment from '../Modal/ModalComment'
+import ModalBlog from '../Modal/Modal'
 import { useSelector, useDispatch, connect } from "react-redux"
 
 
-const Comment = (props) => {
+const Blog = (props) => {
 
-    const { data: { title, createdAt, text, id } } = props
-    const [blog, setBlog] = useState(0);
+    const { comment: { title, createdAt, text, id } } = props
     const dispatch = useDispatch()
-    const commentLists = useSelector((state) => state.comment)
+    const commnetsLists = useSelector((state) => state.comments)
+    const [comment, setComment] = useState(0);
     const [modal, setModal] = useState(false);
     const [unmountOnClose, setUnmountOnClose] = useState(true)
 
 
-    //Delete comment
+    //Delete blog
     function blogDelete(e, id) {
+
         e.stopPropagation()
-        let del = commentLists.filter(bl => {
+        let del = commnetsLists.filter(comment => {
             return (
-                bl.id !== props.data.id
+                comment.id !== props.comment.id
             )
         })
         return (
             deleteApi("Comment", 'delete', id),
             dispatch({ type: "DELETE_COMMENT", payload: del })
         )
+
     }
-    //Get single commeent
+    //Get single blog
     const toggle = (e) => {
         e.preventDefault()
         setModal(!modal)
         fetchSingleApi("Comment", 'get', id).then(res => {
-            setBlog(res.data.resultData)
+            setComment(res.data.resultData)
         })
     };
 
@@ -50,36 +51,20 @@ const Comment = (props) => {
 
     return (
 
-        <Card className={styles.blog}>
+        <Card className={styles.comment}>
             <CardBody>
-            </CardBody>
-            <Row>
-                <Col md={2} className={styles.blogimage}>
-                    <img src="https://via.placeholder.com/80" aria-hidden alt="Picture of me taking a photo of an image" />
-                </Col>
-                <Col md={7} className={styles.title}>
-                    <CardTitle>{title}</CardTitle>
-                    <CardSubtitle className={styles.time}>Posted date: {moment(createdAt).format('DD MM YYYY')} at {moment(createdAt).format('HH:mm')} by some Person</CardSubtitle>
-
-                </Col>
-                <Col md={3}>
+                <CardTitle className={styles.title}>{title}</CardTitle>
+                <CardTitle className={styles.time}>Posted date: {moment(createdAt).format('DD MM YYYY')} at {moment(createdAt).format('HH:mm')} by some Person</CardTitle>
+                <CardText className={styles.cardtext}>{text}</CardText>
+                <Col md={{ offset: 9, size: 3 }} className={styles.btn}>
                     <Button href="#" onClick={(e) => toggle(e)}>Edit</Button>
                     <Button href="#" onClick={(e) => blogDelete(e, id)} >Delete</Button>
                 </Col>
-            </Row>
-            <CardBody className={styles.cardtext}>
-                <CardText>{text}</CardText>
             </CardBody>
-            <Row className={styles.images}>
-                <Col md={{ size: 6, offset: 3 }}>
-                    <img src="https://via.placeholder.com/100" aria-hidden alt="Picture of me taking a photo of an image" />
-                    <img src="https://via.placeholder.com/100" aria-hidden alt="Picture of me taking a photo of an image" />
-                    <img src="https://via.placeholder.com/100" aria-hidden alt="Picture of me taking a photo of an image" />
-                </Col>
-            </Row>
-            <ModalComment id={id} isEdit={true} blog={blog} modal={modal} toggle={(e) => toggle(e)} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
+
+            <ModalBlog comment={comment} id={id} isEdit={true} modal={modal} toggle={(e) => toggle(e)} changeUnmountOnClose={changeUnmountOnClose} unmountOnClose={unmountOnClose} />
         </Card>
     );
 };
 
-export default connect()(withRouter(Comment));
+export default connect()(Blog);

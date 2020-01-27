@@ -4,6 +4,7 @@ import Header from './components/Header/Header'
 import CommentList from './components/CommentList/CommentList'
 
 function App() {
+
   return (
     <React.Fragment>
       <Header />

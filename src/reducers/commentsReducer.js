@@ -13,7 +13,11 @@ export default (state = initialsState, action) => {
     case ADD_COMMENT:
       return { state: state.comments.push(action.payload), ...state };
     case DELETE_COMMENT:
-      return { comments: action.payload };
+      return {
+        comments: state.comments.filter(comment => {
+          return comment.id !== action.payload;
+        })
+      };
     case UPDATE_COMMENT:
       return {
         comments: state.comments.map(element =>

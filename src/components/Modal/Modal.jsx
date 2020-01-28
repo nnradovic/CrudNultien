@@ -11,15 +11,16 @@ const ModalComment = props => {
   let createdAt = new Date().getTime();
   const dispatch = useDispatch();
   const { handleSubmit, register } = useForm();
+
   const onSubmit = values => {
-    try {
-      addEdit().fetch(
-        addEdit().resource,
-        addEdit().method,
-        values,
-        addEdit().isEdit ? props.id : uniqueId(comments),
-        createdAt
-      );
+    // try {
+    addEdit().fetch(
+      addEdit().resource,
+      addEdit().method,
+      values,
+      addEdit().isEdit ? props.id : uniqueId(comments),
+      createdAt
+    ).then(res => {
       dispatch({
         type: addEdit().type,
         payload: {
@@ -27,13 +28,15 @@ const ModalComment = props => {
           id: addEdit().isEdit ? props.id : uniqueId(comments),
           createdAt
         }
-      });
+      })
       toggle()
-    } catch (e) {
+    }).catch(err => {
       errorToast()
       toggle()
-    }
-  };
+
+    })
+
+  }
   return (
     <Fragment>
 

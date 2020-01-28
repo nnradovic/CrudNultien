@@ -1,29 +1,31 @@
 import env from "../env";
 import axios from "axios";
 
-const fetchApi = (resource, method, values) => {
+async function fetchApi(resource, method, values) {
   const options = {
     method: method,
     url: `${env.backend_url}/${resource}`,
     data: values
   };
-  return axios(options);
+  return await axios(options)
+
 };
-const fetchSingleApi = (resource, method, id) => {
+async function fetchSingleApi(resource, method, id) {
   const options = {
     method: method,
     url: `${env.backend_url}/${resource}/${id}`
   };
-  return axios(options);
+  return await axios(options);
 };
-const deleteApi = (resource, method, id) => {
+async function deleteApi(resource, method, id) {
   const options = {
     method: method,
     url: `${env.backend_url}/${resource}/${id}`
   };
-  axios(options)
+  return await axios(options)
+
 };
-const updateApi = (resource, method, values, id) => {
+async function updateApi(resource, method, values, id) {
   const options = {
     method: method,
     url: `${env.backend_url}/${resource}/${id}`,
@@ -35,13 +37,13 @@ const updateApi = (resource, method, values, id) => {
       values
     )
   };
-  return axios(options);
+  return await axios(options);
 };
-const searchApi = (resource, method, values) => {
+async function searchApi(resource, method, values) {
   const options = {
     method: method,
     url: `${env.backend_url}/${resource}/Search?term=${values}`
   };
-  return axios(options);
+  return await axios(options);
 };
 export { fetchApi, deleteApi, fetchSingleApi, updateApi, searchApi };

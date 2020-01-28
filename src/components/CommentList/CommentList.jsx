@@ -19,14 +19,17 @@ function CommentList(props) {
   const toggle = () => setModal(!modal);
   //Load blogs
   useEffect(() => {
-    try {
-      fetchApi("Comment", "get").then(res => {
-        dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData });
-      });
-    } catch (e) {
+    fetchApi("Comment", "get").then(res => {
+      dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData });
+    }).catch(err => {
       setError(true)
-    }
+
+    })
+
   }, [dispatch]);
+
+
+
 
   const renderBlogs = () => {
     return (!!comments && !error) ? (
@@ -67,9 +70,8 @@ function CommentList(props) {
   };
 
   const errorToast = () => {
-    setMsg('added')
+    setMsg('updated')
     setError(true)
-
   }
 
 

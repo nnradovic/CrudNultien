@@ -5,7 +5,7 @@ import styles from "./comment.module.sass";
 import moment from "moment";
 import { deleteApi, fetchSingleApi, updateApi } from "../../api/fetch_api";
 import ModalBlog from "../Modal/Modal";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import ToastDrop from "../../utils/Toast/Toast";
 
 const Comment = props => {
@@ -17,22 +17,16 @@ const Comment = props => {
   const dispatch = useDispatch();
   const [error, setError] = useState(false)
   const [msg, setMsg] = useState("delete")
-  const { comments } = useSelector(state => state.comments);
   const [comment, setComment] = useState(0);
   const [modal, setModal] = useState(false);
 
   //Delete blog
   const blogDelete = () => {
-
-    let del = comments.filter(comment => {
-      return comment.id !== props.comment.id;
-    });
-    try {
-      deleteApi("Comment", "delete", id)
-      dispatch({ type: "DELETE_COMMENT", payload: del })
-    } catch (e) {
+    deleteApi("Comment", "delete", id).then(res => {
+      dispatch({ type: "DELETE_COMMENT", payload: id })
+    }).catch(err => {
       setError(true)
-    }
+    })
   };
 
   //Get single blog
@@ -40,7 +34,10 @@ const Comment = props => {
     setModal(!modal);
     fetchSingleApi("Comment", "get", id).then(res => {
       setComment(res.data.resultData);
-    });
+    }).catch(err => {
+      setError(true)
+
+    })
   };
   const addEdit = () => {
     return {
@@ -61,9 +58,7 @@ const Comment = props => {
   return (
 
     <Fragment>
-
       {error ? <ToastDrop msg={msg} /> : null}
-
       <Card className={styles.comment}>
         <CardBody>
           <CardTitle className={styles.title}>{title}</CardTitle>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import { searchApi, fetchApi } from "../../api/fetch_api";
 import { useDispatch } from "react-redux";
 import styles from "./header.module.sass";
+import { useDebouncedCallback } from 'use-debounce';
 import {
   Collapse,
   Navbar,
@@ -18,23 +19,22 @@ const Header = () => {
   const toggle = () => setIsOpen(!isOpen);
   const dispatch = useDispatch();
 
-  //Search input
-  const handleChange = event => {
-    setsearchTerm(event.target.value);
-  };
+  // Search input
+  const [debouncedFunction] = useDebouncedCallback(searchTerm => {
+    setsearchTerm(searchTerm);
+  }, 1000);
+
   useEffect(() => {
-    try {
-      (searchTerm === "" ? fetchApi : searchApi)(
-        "Comment",
-        "get",
-        searchTerm
-      ).then(res => {
-        dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData });
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    (searchTerm === "" ? fetchApi : searchApi)(
+      "Comment",
+      "get",
+      searchTerm
+    ).then(res => {
+      dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData });
+    });
+
   }, [searchTerm, dispatch]);
+
 
   return (
     <Fragment>
@@ -43,7 +43,7 @@ const Header = () => {
         <Input
           style={{ width: 200 }}
           placeholder="Search"
-          onChange={handleChange}
+          onChange={(e) => debouncedFunction(e.target.value)}
         />
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>

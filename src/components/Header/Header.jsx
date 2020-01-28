@@ -1,8 +1,10 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { searchApi, fetchApi } from "../../api/fetch_api";
 import { useDispatch } from "react-redux";
+//api
+import { searchApi, fetchApi } from "../../api/fetch_api";
+//components
 import styles from "./header.module.sass";
-import { useDebouncedCallback } from 'use-debounce';
+//module
 import {
   Collapse,
   Navbar,
@@ -12,6 +14,8 @@ import {
   NavLink,
   Input
 } from "reactstrap";
+//helpers
+import { useDebouncedCallback } from "use-debounce";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,9 +36,7 @@ const Header = () => {
     ).then(res => {
       dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData });
     });
-
   }, [searchTerm, dispatch]);
-
 
   return (
     <Fragment>
@@ -43,7 +45,7 @@ const Header = () => {
         <Input
           style={{ width: 200 }}
           placeholder="Search"
-          onChange={(e) => debouncedFunction(e.target.value)}
+          onChange={e => debouncedFunction(e.target.value)}
         />
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>

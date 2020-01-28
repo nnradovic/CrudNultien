@@ -1,8 +1,11 @@
 import React, { Fragment } from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+//components
 import styles from "./modal.module.sass";
+//modules
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+//helpers
 import uniqueId from "../../utils/uniqueId";
 
 const ModalComment = props => {
@@ -13,33 +16,27 @@ const ModalComment = props => {
   const { handleSubmit, register } = useForm();
 
   const onSubmit = values => {
-    // try {
-    addEdit().fetch(
-      addEdit().resource,
-      addEdit().method,
-      values,
-      addEdit().isEdit ? props.id : uniqueId(comments),
-      createdAt
-    ).then(res => {
-      dispatch({
-        type: addEdit().type,
-        payload: {
-          ...values,
-          id: addEdit().isEdit ? props.id : uniqueId(comments),
-          createdAt
-        }
+    //add or edit comment
+    addEdit
+      .callback(values)
+      .then(res => {
+        dispatch({
+          type: addEdit.type,
+          payload: {
+            ...values,
+            id: addEdit.isEdit ? props.id : uniqueId(comments),
+            createdAt
+          }
+        });
+        toggle();
       })
-      toggle()
-    }).catch(err => {
-      errorToast()
-      toggle()
-
-    })
-
-  }
+      .catch(err => {
+        errorToast();
+        toggle();
+      });
+  };
   return (
     <Fragment>
-
       <Modal
         size="lg"
         id="header"
@@ -84,7 +81,6 @@ const ModalComment = props => {
         </form>
       </Modal>
     </Fragment>
-
   );
 };
 

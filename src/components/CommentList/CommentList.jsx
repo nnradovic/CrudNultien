@@ -1,83 +1,74 @@
 import React, { useEffect, useState, Fragment } from "react";
-import { Button, Row, Col, Alert } from "reactstrap";
-import { fetchApi } from "../../api/fetch_api";
-import Comment from "../Comment/Comment";
-import styles from "./commentlist.module.sass";
-import ModalBlog from "../Modal/Modal";
 import { useDispatch, useSelector } from "react-redux";
-import PropTypes from "prop-types";
-import uniqueId from "../../utils/uniqueId";
+//api
+import { fetchApi } from "../../api/fetch_api";
+//components
+import Comment from "./Comment/Comment";
+import ModalBlog from "../Modal/Modal";
 import Loader from "../../assets/Loader";
 import ToastDrop from "../../utils/Toast/Toast";
+//modules
+import { Button, Row, Col, Alert } from "reactstrap";
+import styles from "./commentlist.module.sass";
+//helpers
+import PropTypes from "prop-types";
 
-function CommentList(props) {
+function CommentList() {
   const dispatch = useDispatch();
   const { comments } = useSelector(state => state.comments);
-  const [error, setError] = useState(false)
-  const [msg, setMsg] = useState("laoded")
+  const [error, setError] = useState(false);
+  const [msg, setMsg] = useState("laoded");
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
+
   //Load blogs
   useEffect(() => {
-    fetchApi("Comment", "get").then(res => {
-      dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData });
-    }).catch(err => {
-      setError(true)
-
-    })
-
+    fetchApi("Comment", "get")
+      .then(res => {
+        dispatch({ type: "LOAD_COMMENT", payload: res.data.resultData });
+      })
+      .catch(err => {
+        setError(true);
+      });
   }, [dispatch]);
 
-
-
-
   const renderBlogs = () => {
-    return (!!comments && !error) ? (
+    return !!comments && !error ? (
       comments.map((comment, key) => {
-        return (
-          <Comment key={key} comment={comment} />
-
-        )
+        return <Comment key={key} comment={comment} />;
       })
-    ) : (
-        !error ? <Loader /> : error ? <ToastDrop msg={msg} /> : null
-      );
+    ) : !error ? (
+      <Loader />
+    ) : error ? (
+      <ToastDrop msg={msg} />
+    ) : null;
   };
-  const renderButton = () => {
-    return !!comments ?
 
+  const renderButton = () => {
+    return !!comments ? (
       <Button
         id="toggle-theme-btn"
         onClick={toggle}
         className={`${styles.addbutton} float-right`}
       >
         Add Comment
-        </Button>
-      : (
-        null
-      );
+      </Button>
+    ) : null;
   };
-
-  const addEdit = () => {
-    return {
-      type: "ADD_COMMENT",
-      method: "post",
-      resource: "Comment",
-      fetch: fetchApi,
-      isEdit: false,
-      id: uniqueId(comments)
-    };
+  //dispatch data to modal
+  const addEdit = {
+    type: "ADD_COMMENT",
+    isEdit: false,
+    callback: values => fetchApi("Comment", "post", values)
   };
 
   const errorToast = () => {
-    setMsg('updated')
-    setError(true)
-  }
-
+    setMsg("updated");
+    setError(true);
+  };
 
   return (
     <Fragment>
-
       <Row>
         <Col md={{ offset: 2, size: 8 }}>
           <Alert className={styles.alert}>
@@ -87,15 +78,18 @@ function CommentList(props) {
       </Row>
       <div className={styles.container}>
         <Row>
-          <Col>
-            {renderButton()}
-          </Col>
+          <Col>{renderButton()}</Col>
         </Row>
         <Row>
           <Col>{renderBlogs()} </Col>
         </Row>
       </div>
-      <ModalBlog addEdit={addEdit} modal={modal} toggle={toggle} errorToast={errorToast} />
+      <ModalBlog
+        addEdit={addEdit}
+        modal={modal}
+        toggle={toggle}
+        errorToast={errorToast}
+      />
     </Fragment>
   );
 }

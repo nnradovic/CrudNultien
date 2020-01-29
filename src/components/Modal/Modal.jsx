@@ -9,7 +9,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import uniqueId from "../../utils/uniqueId";
 
 const ModalComment = props => {
-  const { className, modal, toggle, comment, addEdit, errorToast } = props;
+  const { className, modal, toggle, comment, addEdit, errorToast, id } = props;
   const { comments } = useSelector(state => state.comments);
   let createdAt = new Date().getTime();
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ const ModalComment = props => {
           type: addEdit.type,
           payload: {
             ...values,
-            id: addEdit.isEdit ? props.id : uniqueId(comments),
+            id: addEdit.isEdit ? id : uniqueId(comments),
             createdAt
           }
         });

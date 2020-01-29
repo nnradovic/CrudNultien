@@ -72,7 +72,7 @@ function CommentList() {
       <Row>
         <Col md={{ offset: 2, size: 8 }}>
           <Alert className={styles.alert}>
-            Container for showin application message
+            Container for showing application message
           </Alert>
         </Col>
       </Row>

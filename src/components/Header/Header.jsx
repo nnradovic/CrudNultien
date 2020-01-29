@@ -41,7 +41,7 @@ const Header = () => {
   return (
     <Fragment>
       <Navbar light expand="lg" className={styles.navigation}>
-        <NavbarBrand href="/">Fronet end app</NavbarBrand>
+        <NavbarBrand href="/">Front end app</NavbarBrand>
         <Input
           style={{ width: 200 }}
           placeholder="Search"

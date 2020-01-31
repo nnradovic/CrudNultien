@@ -2,8 +2,13 @@
 # Comment post
 Simple CRUD app
 
+
 ### Used Framework/Library on Frontend
 - React
+- React-Redux
+
+### Method
+- Use function componet and hooks.
 
 
 You can see app on the folowing link

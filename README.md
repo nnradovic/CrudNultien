@@ -8,7 +8,7 @@ Simple CRUD app
 - React-Redux
 
 ### Method
-- Use function componet and hooks.
+- Use function component and hooks.
 
 
 You can see app on the folowing link
